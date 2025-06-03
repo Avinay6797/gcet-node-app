@@ -14,8 +14,17 @@ mongoose.connect("mongodb://localhost:27017/gcet")
 
 const userSchema = mongoose.Schema({
   name: { type: String },
+  email:{ type:string },
+  pass: { type:string },
 });
 const User = mongoose.model("User", userSchema);
+
+
+const ProductSchema = mongoose.Schema({
+  name: { type: String },
+  price:{ type: number },
+});
+const Product = mongoose.model("Product", ProductSchema);
 
 
 app.get("/", (req, res) => res.send("good morning"));
