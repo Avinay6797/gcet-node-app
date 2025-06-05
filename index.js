@@ -1,61 +1,35 @@
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from 'dotenv';
+import userRouter from "./routes/userRoutes.js";
+import productRouter from "./routes/productRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
+
+const DBUSER = encodeURIComponent(process.env.DBUSER)
+const DBPASS = encodeURIComponent(process.env.DBPASS)
+const MONGO_URI = `mongodb+srv://${DBUSER}:${DBPASS}@cluster0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+// const MONGO_URI = process.env.MONGO_URI
+// testing
 
 
-mongoose.connect("mongodb://localhost:27017/gcet")
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB connection error:", err));
+app.use("/users", userRouter);
+app.use("/products", productRouter);
+app.use("/orders",orderRouter)
 
-
-const userSchema = mongoose.Schema({
-  name: { type: String },
-  email:{ type:string },
-  pass: { type:string },
-});
-const User = mongoose.model("User", userSchema);
-
-
-const ProductSchema = mongoose.Schema({
-  name: { type: String },
-  price:{ type: number },
-});
-const Product = mongoose.model("Product", ProductSchema);
-
-
-app.get("/", (req, res) => res.send("good morning"));
-
-app.get("/register", async (req, res) => {
-  const result = await User.create({ name: "vinay" });
-  return res.json(result);
-});
-
-app.post("/register", async (req, res) => {
-  const { name } = req.body;
-  const result = await User.create({ name });
-  return res.json(result);
-});
-
-app.get("/greet", (req, res) => res.send("greetings"));
-
-app.get("/name", (req, res) => res.send("vinaykumar"));
-
-app.get("/weather", (req, res) => res.send("24"));
-
-app.get("/products", (req, res) => {
-  const products = [
-    { name: "Product 1", price: 34 },
-    { name: "Product 2", price: 64 },
-    { name: "Product 3", price: 45 },
-  ];
-  res.json(products);
-});
-
-
-app.listen(8081, () => {
-  console.log("Server started on port 8081");
-});
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    app.listen(8081, () => {
+      console.log("Server Started on port 8081");
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
