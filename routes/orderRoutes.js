@@ -1,5 +1,5 @@
 import express from "express";
-import orderModel from "../models/orderModel.js";
+import orderModel from "../model/orderModel.js";
 
 const orderRouter = express.Router();
 
@@ -9,4 +9,4 @@ orderRouter.post("/new", async (req, res) => {
   return res.json(result);
 });
 
-export default orderRouter
+export default orderRouter;
